@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/user/signin",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/user/signup",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/places/vets",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/places/pet-food-shops",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/places/adoption-centers",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/places/groomers",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/places/foster-care",
+      "destination": "/api/index.js"
+    }
+  ]
+}
