@@ -11,18 +11,18 @@ const googleMapsClient = createClient({
     key: process.env.API_KEY,
 });
 
-// Middleware to get client's IP address
+
 const getClientIp = (req) => {
     const ipAddress = requestIp.getClientIp(req);
-    return ipAddress === '::1' ? '8.8.8.8' : ipAddress; // Replace '::1' with your local IP if needed
+    return ipAddress === '::1' ? '8.8.8.8' : ipAddress; 
 };
 
-// Middleware to get location based on IP address
+
 const getLocationFromIp = async (req, res, next) => {
     googleMapsClient.geolocate({ considerIp: true }, (err, response) => {
         if (err) {
             console.error('Error getting location from IP:', err);
-            req.location = { lat: 0, long: 0 }; // Default to (0, 0) if location cannot be determined
+            req.location = { lat: 0, long: 0 }; 
         } else {
             const { lat, lng } = response.json.location;
             req.location = { lat, long: lng };
