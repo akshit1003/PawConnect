@@ -11,23 +11,37 @@ const googleMapsClient = createClient({
     key: process.env.API_KEY,
 });
 
-router.get('/vets', (req, res) => {
-    const { lat, long } = req.query
+// Middleware to get client's IP address
+const getClientIp = (req) => {
+    const ipAddress = requestIp.getClientIp(req);
+    return ipAddress === '::1' ? '8.8.8.8' : ipAddress; // Replace '::1' with your local IP if needed
+};
+
+// Middleware to get location based on IP address
+const getLocationFromIp = async (req, res, next) => {
+    googleMapsClient.geolocate({ considerIp: true }, (err, response) => {
+        if (err) {
+            console.error('Error getting location from IP:', err);
+            req.location = { lat: 0, long: 0 }; // Default to (0, 0) if location cannot be determined
+        } else {
+            const { lat, lng } = response.json.location;
+            req.location = { lat, long: lng };
+        }
+        next();
+    });
+};
+
+router.get('/vets', getLocationFromIp, (req, res) => {
+    const { lat, long } = req.location;
     googleMapsClient.placesNearby({
-        location: [lat, long], 
+        location: [lat, long],
         radius: 5000,
         keyword: 'veterinarian'
-    }, (err, response) => {
-        if (err) {
-            res.status(500).json({ message: 'Error fetching data from Google API', error: err });
-        } else {
-            res.status(200).json(response.json.results);
-        }
-    });
+    }, callback(res));
 });
 
-router.get('/pet-food-shops', (req, res) => {
-    const { lat, long } = req.query;
+router.get('/pet-food-shops', getLocationFromIp, (req, res) => {
+    const { lat, long } = req.location;
     googleMapsClient.placesNearby({
         location: [lat, long],
         radius: 5000,
@@ -35,8 +49,8 @@ router.get('/pet-food-shops', (req, res) => {
     }, callback(res));
 });
 
-router.get('/adoption-centers', (req, res) => {
-    const { lat, long } = req.query;
+router.get('/adoption-centers', getLocationFromIp, (req, res) => {
+    const { lat, long } = req.location;
     googleMapsClient.placesNearby({
         location: [lat, long],
         radius: 5000,
@@ -44,8 +58,8 @@ router.get('/adoption-centers', (req, res) => {
     }, callback(res));
 });
 
-router.get('/groomers', (req, res) => {
-    const { lat, long } = req.query;
+router.get('/groomers', getLocationFromIp, (req, res) => {
+    const { lat, long } = req.location;
     googleMapsClient.placesNearby({
         location: [lat, long],
         radius: 5000,
@@ -53,8 +67,8 @@ router.get('/groomers', (req, res) => {
     }, callback(res));
 });
 
-router.get('/foster-care', (req, res) => {
-    const { lat, long } = req.query;
+router.get('/foster-care', getLocationFromIp, (req, res) => {
+    const { lat, long } = req.location;
     googleMapsClient.placesNearby({
         location: [lat, long],
         radius: 5000,
