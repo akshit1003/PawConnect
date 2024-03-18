@@ -7,6 +7,8 @@ import { Strategy as LocalStrategy } from 'passport-local';
 
 const router = express.Router();
 
+router.use(express.json());
+
 router.use(session({
     secret: 'TOPSECRET',
     resave: false,
@@ -75,6 +77,8 @@ router.post('/signup', (req, res) => {
         .catch(error => {
             res.status(500).json({ message: 'Something went wrong', error });
         });
+
+
 });
 
 router.post('/signin', passport.authenticate('local'), (req, res) => {
