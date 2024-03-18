@@ -1,8 +1,45 @@
 import express from 'express';
 import { User } from '../models/userModel.js';
 import bcrypt from 'bcryptjs';
+import session from 'express-session';
+import passport from 'passport';
+import { Strategy as LocalStrategy} from 'passport-local';
 
 const router = express.Router();
+router.use(session({
+    secret: 'TOPSECRET',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { 
+        maxAge: 1000 * 60 * 10 } 
+}));
+
+router.use(passport.initialize());
+router.use(passport.session());
+
+passport.use(new LocalStrategy({ usernameField: 'emailId' },
+    function (emailId, password, done) {
+        User.findOne({ emailId }, function (err, user) {
+            if (err) { return done(err); }
+            if (!user) { return done(null, false); }
+            bcrypt.compare(password, user.password, function (err, res) {
+                if (err) { return done(err); }
+                if (res === false) { return done(null, false); }
+                return done(null, user);
+            });
+        });
+    }
+));
+
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function (id, done) {
+    User.findById(id, function (err, user) {
+        done(err, user);
+    });
+});
 
 router.post('/signup', (req, res) => {
     const { emailId, password } = req.body;

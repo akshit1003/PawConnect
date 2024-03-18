@@ -1,12 +1,14 @@
 import express from 'express';
 import { createClient } from '@google/maps';
+import dotenv from 'dotenv';
+import requestIp from 'request-ip';
 
-import router from "./userRoutes";
+dotenv.config();
 
 const router = express.Router();
 
 const googleMapsClient = createClient({
-    key: '',
+    key: process.env.API_KEY,
 });
 
 router.get('/vets', (req, res) => {

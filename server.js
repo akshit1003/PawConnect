@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import userRoute from "./routes/userRoutes.js";
 import http from "http";
 import { Server } from "socket.io";
-// import placesRoute from "./routes/placesRoutes.js"
+import placesRoute from "./routes/placesRoutes.js"
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 
 app.use('/user', userRoute)
 
-// app.use('/places', placesRoute)
+app.use('/places', placesRoute)
 
 mongoose.connect(process.env.mongoURL) 
     .then(() => {
